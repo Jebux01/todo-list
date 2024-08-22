@@ -1,0 +1,25 @@
+# Etapa de desarrollo
+FROM node:18-alpine AS development
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+CMD ["yarn", "start"]
+
+# Etapa de producción
+FROM node:18-alpine AS production
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+
+RUN yarn install --production
+
+COPY --from=development /app/build /app/build
+
+CMD ["yarn", "start:prod"]
